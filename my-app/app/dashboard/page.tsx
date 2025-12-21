@@ -1,4 +1,12 @@
 import { redirect } from "next/navigation"
+import Link from "next/link"
+import {
+  CheckCircle,
+  AlertCircle,
+  Folder,
+  Plus,
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -6,36 +14,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/server"
+import Onboarding from "./onboarding"
 
 async function signOut() {
   "use server"
   const supabase = await createClient()
   await supabase.auth.signOut()
   redirect("/auth/login")
-}
-
-async function createWorkspace(formData: FormData) {
-  "use server"
-  
-  const supabase = await createClient()
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  
-  if (!user) redirect("/auth/login")
-
-  const name = formData.get("name") as string
-  if (!name?.trim()) return
-
-  await supabase
-    .from("workspaces")
-    .insert({ name: name.trim(), owner_id: user.id })
-  redirect("/dashboard")
 }
 
 export default async function DashboardPage() {
@@ -54,48 +40,112 @@ export default async function DashboardPage() {
     .eq("owner_id", user.id)
     .single()
 
+  if (!workspace) {
+    return (
+      <div className="relative p-6">
+        <form action={signOut} className="absolute right-6 top-6">
+          <Button type="submit" variant="ghost" size="sm">
+            Sign Out
+          </Button>
+        </form>
+        <Onboarding />
+      </div>
+    )
+  }
+
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("workspace_id", workspace.id)
+
+  const projectList = projects ?? []
+
   return (
     <div className="relative p-6">
-      <form
-        action={signOut}
-        className="absolute right-6 top-6"
-      >
+      <form action={signOut} className="absolute right-6 top-6">
         <Button type="submit" variant="ghost" size="sm">
           Sign Out
         </Button>
       </form>
 
-      {!workspace ? (
-        <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center">
-          <Card className="w-full max-w-[400px]">
-            <CardHeader>
-              <CardTitle>Create your Workspace</CardTitle>
-              <CardDescription>
-                Give your workspace a name to get started
-              </CardDescription>
+      <div className="flex flex-col gap-8 pt-12">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                Active Rights
+              </CardTitle>
+              <CheckCircle className="size-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <form action={createWorkspace} className="flex flex-col gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="name">Workspace Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="My Workspace"
-                    required
-                  />
-                </div>
-                <Button type="submit">Create Workspace</Button>
-              </form>
+              <div className="text-2xl font-bold">0</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                Expiring in 30 Days
+              </CardTitle>
+              <AlertCircle className="size-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">0</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">
+                Expiring in 7 Days
+              </CardTitle>
+              <AlertCircle className="size-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">0</div>
             </CardContent>
           </Card>
         </div>
-      ) : (
-        <div className="pt-12">
-          <p>Welcome to {workspace.name}</p>
+
+
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Projects</h2>
+          <Button asChild size="sm">
+            <Link href="/projects/new">
+              <Plus className="size-4" />
+              New Project
+            </Link>
+          </Button>
         </div>
-      )}
+
+
+        <div className="rounded-lg border">
+          {projectList.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+              <Folder className="size-12 text-muted-foreground" />
+              <p className="text-muted-foreground">
+                No projects yet. Create your first one.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
+              {projectList.map((project) => (
+                <Card key={project.id} className="transition-colors hover:bg-muted/50">
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center gap-2">
+                      <Folder className="size-4 text-muted-foreground" />
+                      <CardTitle className="text-base">
+                        {project.name ?? "Untitled Project"}
+                      </CardTitle>
+                    </div>
+                    <CardDescription>
+                      {project.client_brand_name ?? "—"}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
