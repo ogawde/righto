@@ -4,8 +4,8 @@ import {
   CheckCircle,
   AlertCircle,
   Folder,
-  Plus,
 } from "lucide-react"
+import { NewProjectModal } from "@/components/new-project-modal"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -108,12 +108,7 @@ export default async function DashboardPage() {
 
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Projects</h2>
-          <Button asChild size="sm">
-            <Link href="/projects/new">
-              <Plus className="size-4" />
-              New Project
-            </Link>
-          </Button>
+          <NewProjectModal />
         </div>
 
 
@@ -139,6 +134,9 @@ export default async function DashboardPage() {
                     <CardDescription>
                       {project.client_brand_name ?? "—"}
                     </CardDescription>
+                    <Button asChild variant="outline" size="sm" className="mt-2 w-fit">
+                      <Link href={"/projects/" + project.id}>View</Link>
+                    </Button>
                   </CardHeader>
                 </Card>
               ))}
