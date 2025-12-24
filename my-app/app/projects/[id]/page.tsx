@@ -83,7 +83,12 @@ export default async function ProjectPage({
                   <div className="flex items-center gap-2">
                     <Megaphone className="size-4 text-muted-foreground" />
                     <CardTitle className="text-base">
-                      {campaign.name ?? "Untitled Campaign"}
+                      <Link
+                        href={`/campaigns/${campaign.id}`}
+                        className="hover:underline"
+                      >
+                        {campaign.name ?? "Untitled Campaign"}
+                      </Link>
                     </CardTitle>
                   </div>
                   <CardDescription>
