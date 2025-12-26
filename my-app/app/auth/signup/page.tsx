@@ -25,6 +25,7 @@ export default function SignupPage() {
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        setError(null)
         setIsLoading(true)
 
         const supabase = createClient()
@@ -34,11 +35,12 @@ export default function SignupPage() {
             options: { data: { full_name: fullName } },
         })
 
-        console.log(signUpError)
-
         setIsLoading(false)
 
-
+        if (signUpError) {
+            setError(signUpError.message)
+            return
+        }
 
         router.push("/dashboard")
     }

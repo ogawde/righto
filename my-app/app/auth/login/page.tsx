@@ -24,6 +24,7 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setError(null)
     setIsLoading(true)
 
     const supabase = createClient()
@@ -33,13 +34,14 @@ export default function LoginPage() {
       password,
     })
 
-    console.log(signInError)
-
     setIsLoading(false)
 
+    if (signInError) {
+      setError(signInError.message)
+      return
+    }
 
-
-    router.push("/dashboard")    
+    router.push("/dashboard")
   }
 
   return (

@@ -31,7 +31,8 @@ type RightsEntry = {
   influencer_handle: string | null
   content_type: string | null
   usage_type: string | null
-  link: string | null
+  link?: string | null
+  instagram_url?: string | null
   rights_start_date: string | null
   rights_end_date: string | null
 }
@@ -220,14 +221,14 @@ export default async function CampaignPage({
                     </TableCell>
                     <TableCell>{entry.usage_type ?? "—"}</TableCell>
                     <TableCell>
-                      {entry.link ? (
+                      {(entry.instagram_url ?? entry.link) ? (
                         <a
-                          href={entry.link}
+                          href={entry.instagram_url ?? entry.link ?? ""}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline truncate max-w-[120px] inline-block"
                         >
-                          {entry.link}
+                          {entry.instagram_url ?? entry.link}
                         </a>
                       ) : (
                         "—"
