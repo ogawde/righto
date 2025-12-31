@@ -15,8 +15,9 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
+  const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -28,16 +29,16 @@ export default function LoginPage() {
     setIsLoading(true)
 
     const supabase = createClient()
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: { data: { full_name: fullName } },
     })
 
     setIsLoading(false)
 
-    if (signInError) {
-      setError(signInError.message)
+    if (signUpError) {
+      setError(signUpError.message)
       return
     }
 
@@ -48,13 +49,25 @@ export default function LoginPage() {
     <div className="flex min-h-svh w-full items-center justify-center p-6">
       <Card className="w-full max-w-[400px]">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
+          <CardTitle>Sign up</CardTitle>
           <CardDescription>
-            Enter your credentials to access your account
+            Create an account to get started
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="John Doe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                autoComplete="name"
+              />
+            </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -76,11 +89,11 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in…" : "Sign In"}
+              {isLoading ? "Creating account…" : "Sign Up"}
             </Button>
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -88,12 +101,12 @@ export default function LoginPage() {
               </p>
             )}
             <p className="text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Already have an account?{" "}
               <Link
-                href="/auth/signup"
+                href="/login"
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
-                Sign up
+                Sign in
               </Link>
             </p>
           </form>

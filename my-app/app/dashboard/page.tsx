@@ -17,13 +17,6 @@ import {
 import { createClient } from "@/lib/supabase/server"
 import Onboarding from "./onboarding"
 
-async function signOut() {
-  "use server"
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  redirect("/auth/login")
-}
-
 export default async function DashboardPage() {
   const supabase = await createClient()
   const {
@@ -31,7 +24,7 @@ export default async function DashboardPage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/auth/login")
+    redirect("/login")
   }
 
   const { data: workspace } = await supabase
@@ -42,12 +35,7 @@ export default async function DashboardPage() {
 
   if (!workspace) {
     return (
-      <div className="relative p-6">
-        <form action={signOut} className="absolute right-6 top-6">
-          <Button type="submit" variant="ghost" size="sm">
-            Sign Out
-          </Button>
-        </form>
+      <div className="p-6">
         <Onboarding />
       </div>
     )
@@ -61,14 +49,7 @@ export default async function DashboardPage() {
   const projectList = projects ?? []
 
   return (
-    <div className="relative p-6">
-      <form action={signOut} className="absolute right-6 top-6">
-        <Button type="submit" variant="ghost" size="sm">
-          Sign Out
-        </Button>
-      </form>
-
-      <div className="flex flex-col gap-8 pt-12">
+    <div className="flex flex-col gap-8 p-6">
         <div className="grid gap-4 sm:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -143,7 +124,6 @@ export default async function DashboardPage() {
             </div>
           )}
         </div>
-      </div>
     </div>
   )
 }

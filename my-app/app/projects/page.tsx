@@ -18,7 +18,7 @@ export default async function ProjectsPage() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/auth/login")
+    redirect("/login")
   }
 
   const { data: workspace } = await supabase

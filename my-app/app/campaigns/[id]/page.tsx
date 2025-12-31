@@ -43,11 +43,12 @@ function getStatus(endDate: string | null): "active" | "expiring_soon" | "expire
   today.setHours(0, 0, 0, 0)
   const end = new Date(endDate)
   end.setHours(0, 0, 0, 0)
-  const in30Days = new Date(today)
-  in30Days.setDate(in30Days.getDate() + 30)
+  const daysUntilExpiry = Math.floor(
+    (end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+  )
 
-  if (end < today) return "expired"
-  if (end <= in30Days) return "expiring_soon"
+  if (daysUntilExpiry <= 0) return "expired"
+  if (daysUntilExpiry <= 7) return "expiring_soon"
   return "active"
 }
 
@@ -111,11 +112,6 @@ export default async function CampaignPage({
 
   const entries = (rightsEntries ?? []) as RightsEntry[]
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const in30Days = new Date(today)
-  in30Days.setDate(in30Days.getDate() + 30)
-
   const total = entries.length
   const active = entries.filter((e) => getStatus(e.rights_end_date) === "active").length
   const expiringSoon = entries.filter(
@@ -168,7 +164,7 @@ export default async function CampaignPage({
         <Card className="min-w-[140px]">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">
-              Expiring Soon (≤ 30 days)
+              Expiring Soon (≤ 7 days)
             </CardTitle>
           </CardHeader>
           <CardContent>
