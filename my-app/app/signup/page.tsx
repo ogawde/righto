@@ -21,15 +21,17 @@ export default function SignupPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
+    setSuccessMessage(null)
     setIsLoading(true)
 
     const supabase = createClient()
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { full_name: fullName } },
@@ -38,7 +40,23 @@ export default function SignupPage() {
     setIsLoading(false)
 
     if (signUpError) {
-      setError(signUpError.message)
+      const message =
+        signUpError.message === "User already registered"
+          ? "This email is already registered. Please sign in instead."
+          : signUpError.message
+      setError(message)
+      return
+    }
+
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      setError("This email is already registered. Please sign in instead.")
+      return
+    }
+
+    if (!data.session) {
+      setSuccessMessage(
+        "Account created. Please check your email and confirm your account before signing in."
+      )
       return
     }
 
@@ -98,6 +116,11 @@ export default function SignupPage() {
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                 {error}
+              </p>
+            )}
+            {successMessage && (
+              <p className="text-sm text-green-600 dark:text-green-400" role="status">
+                {successMessage}
               </p>
             )}
             <p className="text-center text-sm text-muted-foreground">

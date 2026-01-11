@@ -21,6 +21,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
+  const isDemoLoginEnabled = process.env.NEXT_PUBLIC_DEMO_LOGIN_ENABLED === "true"
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -37,11 +39,38 @@ export default function LoginPage() {
     setIsLoading(false)
 
     if (signInError) {
-      setError(signInError.message)
+      const message =
+        signInError.message === "Invalid login credentials"
+          ? "Invalid email or password."
+          : signInError.message === "Email not confirmed"
+            ? "Please confirm your email before signing in."
+            : signInError.message
+      setError(message)
       return
     }
 
     router.push("/dashboard")
+  }
+
+  async function handleDemoLogin() {
+    setError(null)
+    setIsDemoLoading(true)
+
+    try {
+      const response = await fetch("/api/auth/demo-login", { method: "POST" })
+      const payload = (await response.json().catch(() => ({}))) as { error?: string }
+
+      if (!response.ok) {
+        setError(payload.error ?? "Could not sign in with demo account.")
+        return
+      }
+
+      router.push("/dashboard")
+    } catch {
+      setError("Could not sign in with demo account. Please try again.")
+    } finally {
+      setIsDemoLoading(false)
+    }
   }
 
   return (
@@ -82,6 +111,17 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Signing in…" : "Sign In"}
             </Button>
+            {isDemoLoginEnabled && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={isDemoLoading || isLoading}
+                onClick={handleDemoLogin}
+              >
+                {isDemoLoading ? "Signing in to demo…" : "Try Demo"}
+              </Button>
+            )}
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400" role="alert">
                 {error}
