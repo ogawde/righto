@@ -41,7 +41,7 @@ export default async function ProjectsPage() {
   return (
     <div className="flex flex-col gap-8 p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Projects</h1>
+        <h1 className="text-2xl font-semibold">Brands</h1>
         <NewProjectModal />
       </div>
 
@@ -50,7 +50,7 @@ export default async function ProjectsPage() {
           <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
             <Folder className="size-12 text-muted-foreground" />
             <p className="text-muted-foreground">
-              No projects yet. Create your first one.
+              No brands yet. Create your first one.
             </p>
           </div>
         ) : (
@@ -64,7 +64,7 @@ export default async function ProjectsPage() {
                   <div className="flex items-center gap-2">
                     <Folder className="size-4 text-muted-foreground" />
                     <CardTitle className="text-base">
-                      {project.name ?? "Untitled Project"}
+                      {project.name ?? "Untitled Brand"}
                     </CardTitle>
                   </div>
                   <CardDescription>

@@ -32,10 +32,7 @@ export function NewCampaignModal({
   const [open, setOpen] = useState(false)
 
   async function handleSubmit(formData: FormData) {
-    const result = await createCampaign(formData)
-    if (result?.success) {
-      setOpen(false)
-    }
+    await createCampaign(formData)
   }
 
   return (

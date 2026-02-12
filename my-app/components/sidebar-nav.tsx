@@ -62,10 +62,10 @@ export function SidebarNav({ projects }: SidebarNavProps) {
           </SidebarMenuItem>
 
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/projects"} tooltip="Projects">
+            <SidebarMenuButton asChild isActive={pathname === "/projects"} tooltip="Brands">
               <Link href="/projects">
                 <FolderOpen />
-                <span>Projects</span>
+                <span>Brands</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

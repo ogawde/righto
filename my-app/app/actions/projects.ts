@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
 export async function createProject(formData: FormData) {
@@ -25,21 +26,23 @@ export async function createProject(formData: FormData) {
 
   const name = formData.get("name") as string
   if (!name?.trim()) {
-    throw new Error("Project name is required")
+    throw new Error("Brand name is required")
   }
 
-  const clientBrandName = (formData.get("client_brand_name") as string) ?? ""
-
-  const { error } = await supabase.from("projects").insert({
-    workspace_id: workspace.id,
-    name: name.trim(),
-    client_brand_name: clientBrandName.trim() || null,
-  })
+  const { data: createdProject, error } = await supabase
+    .from("projects")
+    .insert({
+      workspace_id: workspace.id,
+      name: name.trim(),
+    })
+    .select("id")
+    .single()
 
   if (error) {
     throw new Error(error.message)
   }
 
   revalidatePath("/dashboard")
-  return { success: true }
+  revalidatePath("/projects")
+  redirect(`/projects/${createdProject.id}`)
 }

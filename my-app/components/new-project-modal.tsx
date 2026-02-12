@@ -19,7 +19,7 @@ function SubmitButton() {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Saving…" : "Create Project"}
+      {pending ? "Saving…" : "Create Brand"}
     </Button>
   )
 }
@@ -28,10 +28,7 @@ export function NewProjectModal() {
   const [open, setOpen] = useState(false)
 
   async function handleSubmit(formData: FormData) {
-    const result = await createProject(formData)
-    if (result?.success) {
-      setOpen(false)
-    }
+    await createProject(formData)
   }
 
   return (
@@ -39,34 +36,25 @@ export function NewProjectModal() {
       <DialogTrigger asChild>
         <Button size="sm">
           <Plus className="size-4" />
-          New Project
+          New Brand
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New Project</DialogTitle>
+          <DialogTitle>New Brand</DialogTitle>
         </DialogHeader>
         <form
           action={handleSubmit}
           className="flex flex-col gap-4"
         >
           <div className="flex flex-col gap-2">
-            <Label htmlFor="name">Project Name</Label>
+            <Label htmlFor="name">Brand Name</Label>
             <Input
               id="name"
               name="name"
               type="text"
-              placeholder="My Project"
+              placeholder="My Brand"
               required
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="client_brand_name">Client Brand Name</Label>
-            <Input
-              id="client_brand_name"
-              name="client_brand_name"
-              type="text"
-              placeholder="Acme Inc."
             />
           </div>
           <SubmitButton />

@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 
 export async function createCampaign(formData: FormData) {
@@ -22,21 +23,22 @@ export async function createCampaign(formData: FormData) {
 
   const projectId = formData.get("projectId") as string
   if (!projectId) {
-    throw new Error("Project ID is required")
+    throw new Error("Brand ID is required")
   }
 
-  const description = (formData.get("description") as string) ?? ""
-
-  const { error } = await supabase.from("campaigns").insert({
-    project_id: projectId,
-    name: name.trim(),
-    description: description.trim() || null,
-  })
+  const { data: createdCampaign, error } = await supabase
+    .from("campaigns")
+    .insert({
+      project_id: projectId,
+      name: name.trim(),
+    })
+    .select("id")
+    .single()
 
   if (error) {
     throw new Error(error.message)
   }
 
   revalidatePath(`/projects/${projectId}`, "page")
-  return { success: true }
+  redirect(`/campaigns/${createdCampaign.id}`)
 }

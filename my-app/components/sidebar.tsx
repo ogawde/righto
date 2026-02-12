@@ -64,7 +64,7 @@ export async function Sidebar() {
 
   const projectsWithCampaigns = (projects ?? []).map((project) => ({
     id: project.id,
-    name: project.name ?? "Untitled Project",
+    name: project.name ?? "Untitled Brand",
     campaigns: (campaigns ?? [])
       .filter((campaign) => campaign.project_id === project.id)
       .map((campaign) => ({

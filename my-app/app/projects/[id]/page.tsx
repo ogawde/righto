@@ -54,14 +54,14 @@ export default async function ProjectPage({
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{project.name ?? "Project"}</BreadcrumbPage>
+            <BreadcrumbPage>{project.name ?? "Brand"}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">
-          {project.name ?? "Untitled Project"}
+          {project.name ?? "Untitled Brand"}
         </h1>
         <NewCampaignModal projectId={projectId} />
       </div>
