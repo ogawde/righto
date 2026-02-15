@@ -70,6 +70,7 @@ export async function Sidebar() {
       .map((campaign) => ({
         id: campaign.id,
         name: campaign.name ?? "Untitled Campaign",
+        projectId: project.id,
       })),
   }))
 

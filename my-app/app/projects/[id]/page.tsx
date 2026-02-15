@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/server"
 import { NewCampaignModal } from "@/components/new-campaign-modal"
+import { DeleteProjectButton } from "@/components/delete-project-button"
+import { DeleteCampaignButton } from "@/components/delete-campaign-button"
 
 export default async function ProjectPage({
   params,
@@ -63,7 +65,13 @@ export default async function ProjectPage({
         <h1 className="text-2xl font-semibold">
           {project.name ?? "Untitled Brand"}
         </h1>
-        <NewCampaignModal projectId={projectId} />
+        <div className="flex items-center gap-2">
+          <DeleteProjectButton
+            projectId={projectId}
+            projectName={project.name ?? "Untitled Brand"}
+          />
+          <NewCampaignModal projectId={projectId} />
+        </div>
       </div>
 
       <div className="rounded-lg border">
@@ -80,16 +88,23 @@ export default async function ProjectPage({
                 className="transition-colors hover:bg-muted/50"
               >
                 <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <Megaphone className="size-4 text-muted-foreground" />
-                    <CardTitle className="text-base">
-                      <Link
-                        href={`/campaigns/${campaign.id}`}
-                        className="hover:underline"
-                      >
-                        {campaign.name ?? "Untitled Campaign"}
-                      </Link>
-                    </CardTitle>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Megaphone className="size-4 text-muted-foreground" />
+                      <CardTitle className="text-base">
+                        <Link
+                          href={`/campaigns/${campaign.id}`}
+                          className="hover:underline"
+                        >
+                          {campaign.name ?? "Untitled Campaign"}
+                        </Link>
+                      </CardTitle>
+                    </div>
+                    <DeleteCampaignButton
+                      campaignId={campaign.id}
+                      campaignName={campaign.name ?? "Untitled Campaign"}
+                      redirectTo={`/projects/${projectId}`}
+                    />
                   </div>
                   <CardDescription>
                     {campaign.description ?? "—"}

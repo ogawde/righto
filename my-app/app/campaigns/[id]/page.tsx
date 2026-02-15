@@ -25,6 +25,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { createClient } from "@/lib/supabase/server"
+import { DeleteCampaignButton } from "@/components/delete-campaign-button"
 
 type RightsEntry = {
   id: string
@@ -139,9 +140,16 @@ export default async function CampaignPage({
         <h1 className="text-2xl font-semibold">
           {campaign.name ?? "Untitled Campaign"}
         </h1>
-        <Button asChild size="sm">
-          <Link href={`/campaigns/${campaignId}/new`}>Add Rights Entry</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <DeleteCampaignButton
+            campaignId={campaignId}
+            campaignName={campaign.name ?? "Untitled Campaign"}
+            redirectTo={campaign.project_id ? `/projects/${campaign.project_id}` : "/projects"}
+          />
+          <Button asChild size="sm">
+            <Link href={`/campaigns/${campaignId}/new`}>Add Rights Entry</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-4">

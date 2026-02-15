@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ChevronRight, FolderOpen, LayoutDashboard, Megaphone } from "lucide-react"
+import { ChevronRight, FolderOpen, LayoutDashboard } from "lucide-react"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 import {
@@ -19,6 +19,7 @@ import {
 type SidebarCampaign = {
   id: string
   name: string
+  projectId: string
 }
 
 type SidebarProject = {
@@ -131,9 +132,9 @@ export function SidebarNav({ projects }: SidebarNavProps) {
                             asChild
                             isActive={pathname === `/campaigns/${campaign.id}`}
                             size="md"
+                            className="pl-7"
                           >
                             <Link href={`/campaigns/${campaign.id}`}>
-                              <Megaphone />
                               <span>{campaign.name}</span>
                             </Link>
                           </SidebarMenuSubButton>

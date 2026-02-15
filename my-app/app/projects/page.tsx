@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Folder } from "lucide-react"
 import { NewProjectModal } from "@/components/new-project-modal"
-import { Button } from "@/components/ui/button"
+import { DeleteProjectButton } from "@/components/delete-project-button"
 import {
   Card,
   CardDescription,
@@ -56,28 +56,28 @@ export default async function ProjectsPage() {
         ) : (
           <div className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
             {projectList.map((project) => (
-              <Card
-                key={project.id}
-                className="transition-colors hover:bg-muted/50"
-              >
+              <Card key={project.id} className="relative transition-colors hover:bg-muted/50">
+                <Link
+                  href={`/projects/${project.id}`}
+                  className="absolute inset-0 z-0 rounded-lg"
+                  aria-label={`Open ${project.name ?? "Untitled Brand"}`}
+                />
                 <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <Folder className="size-4 text-muted-foreground" />
-                    <CardTitle className="text-base">
-                      {project.name ?? "Untitled Brand"}
-                    </CardTitle>
+                  <div className="relative z-10 flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Folder className="size-4 text-muted-foreground" />
+                      <CardTitle className="text-base">
+                        {project.name ?? "Untitled Brand"}
+                      </CardTitle>
+                    </div>
+                    <DeleteProjectButton
+                      projectId={project.id}
+                      projectName={project.name ?? "Untitled Brand"}
+                    />
                   </div>
                   <CardDescription>
                     {project.client_brand_name ?? "—"}
                   </CardDescription>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="sm"
-                    className="mt-2 w-fit"
-                  >
-                    <Link href={"/projects/" + project.id}>View</Link>
-                  </Button>
                 </CardHeader>
               </Card>
             ))}
